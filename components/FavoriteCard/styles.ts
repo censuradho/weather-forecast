@@ -17,8 +17,7 @@ export const City = styled.span`
 `
 
 export const MeanTemperature = styled.strong`
-  /* font-size: 2.125rem; */
-  font-size: 1.3rem;
+  font-size: 2rem;
 `
 
 export const MinMaxLabelTemperature = styled.span`

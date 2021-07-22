@@ -6,9 +6,11 @@ import queryString from 'querystring'
 
 import TextInput from 'components/common/TextInput'
 import ActivityIndicator from 'components/common/ActivityIndicator'
+import Button from 'components/common/Button'
 import ReportWeather from 'components/Modal/ReportWeather'
 
 import * as Styles from 'styles/pesquisa'
+import { Box } from 'theme/GlobalStyles'
 
 import localAPI from 'services/local'
 
@@ -62,10 +64,10 @@ function Search () {
 
     setSearchResult(data)
 
-    getInitialRecentSearchs()
     dbLocal.setItem('recents-searchs', {
       [data.location.name]: data.location
     })
+    getInitialRecentSearchs()
   }
 
   const handleCloseReport = () => {
@@ -76,6 +78,14 @@ function Search () {
     const data = dbLocal.getItem<Location>('recents-searchs')
     if (!data) return    
     setRecentSearchs(data)
+  }
+
+  const handleDeleteAllRecentSearchs = () => {
+    recentSearchs.forEach(value => {
+
+      dbLocal.deleteItem('recents-searchs', value.name)
+    })
+    getInitialRecentSearchs()
   }
 
   const renderRecentResults = useMemo(() => recentSearchs.map(value => (
@@ -120,7 +130,10 @@ function Search () {
         </Styles.ListContainer>
         {renderRecentResults.length > 0 && (
           <Styles.ListContainer>
-            <Styles.ListTitle>Resultados recentes</Styles.ListTitle>
+            <Box alignItems="center" justifyContent="space-between">
+              <Styles.ListTitle>Resultados recentes</Styles.ListTitle>
+              <Button onClick={handleDeleteAllRecentSearchs}>Apagar tudo</Button>
+            </Box>
             <Styles.List>
               {renderRecentResults}
             </Styles.List>

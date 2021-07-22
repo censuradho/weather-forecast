@@ -16,7 +16,7 @@ function FavoriteCard (props: FavoriteCardProps) {
 
   return (
     <Styles.Container onClick={props?.onClick}>
-      <Box>
+      <Box gap={.4}>
         <Box column gap={.4} flex={1}>        
           <Styles.City>{props.city}</Styles.City>
           <Styles.MeanTemperature>{props.meanTemperature}</Styles.MeanTemperature>

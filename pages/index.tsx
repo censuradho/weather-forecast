@@ -5,6 +5,7 @@ import Header from 'components/Header'
 import FavoriteCard from 'components/FavoriteCard'
 import Button from 'components/Button'
 import ReportWeather from 'components/Modal/ReportWeather'
+import ActivityIndicator from 'components/common/ActivityIndicator'
 
 import * as Styles from 'styles'
 import { useState } from 'react'
@@ -23,10 +24,6 @@ interface Report {
   data: WeatherResponseData | null
 }
 
-const report3 = { name: '' }
-
-type Reprot3 = keyof typeof report3 
-
 const baseReport: Report = {
   isVisible: false,
   data: null
@@ -34,25 +31,31 @@ const baseReport: Report = {
 
 function  Home () {
   const router = useRouter()
-  const test: Reprot3 = ''
-  
 
   const [report, setReport] = useState<Report>(baseReport)
   const [dataStorage, setDataStorage] = useState<WeatherResponseData[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const getFavoriteData = async () => {
-    const storagedFavorite = dbLocal.getItem<CitiesFavorite>(CITIES_FAVORITE)
+    try {
+      setIsLoading(true)
+      const storagedFavorite = dbLocal.getItem<CitiesFavorite>(CITIES_FAVORITE)
+  
+      const favorites: WeatherResponseData[] = []
+  
+      for (const favorite of storagedFavorite) {
+        const query = queryString.stringify({
+          city: favorite.city
+        })
+        const { data } = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
+        favorites.push(data)
+      }
+      setDataStorage(favorites)
+    } catch (err) {
 
-    const favorites: WeatherResponseData[] = []
-
-    for (const favorite of storagedFavorite) {
-      const query = queryString.stringify({
-        city: favorite.city
-      })
-      const { data } = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
-      favorites.push(data)
+    } finally {
+      setIsLoading(false)
     }
-    setDataStorage(favorites)
   }
 
   const handleOpenReport = async (cityName: string) => {
@@ -70,6 +73,7 @@ function  Home () {
   
   const handleCloseReport = () => {
     setReport(baseReport)
+    getFavoriteData()
   }
 
 
@@ -93,10 +97,11 @@ function  Home () {
 
   useEffect(() => {
     getFavoriteData()
-  }, [report.isVisible])
+  }, [])
 
   return (
     <>
+      <ActivityIndicator isVisible={isLoading} />
       <ReportWeather 
         isVisible={report.isVisible}
         onClose={handleCloseReport}

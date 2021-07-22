@@ -32,9 +32,7 @@ export const IconWeather = styled.div`
   position: relative;
 `
 
-export const Label = styled.strong`
-
-`
+export const Label = styled.strong``
 
 export const Value = styled.span`
   font-size: 1rem;

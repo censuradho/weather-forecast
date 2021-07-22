@@ -27,7 +27,12 @@ function DayCard ({ data, ...props}: DayCardProps) {
         size={3} 
         alt={data.iconAlt || 'icon weather'} 
       />
-      <Box gap={.5}>
+      <Box 
+        column 
+        alignItems="center"
+        justifyContent="center"
+        gap={.5}
+      >
         <Styles.MinTemperature>{data.minTemperature}</Styles.MinTemperature>
         <Styles.MaxTemperature>{data.maxTemperature}</Styles.MaxTemperature>
       </Box>

@@ -42,13 +42,14 @@ flex: 1;
 min-height: 10rem;
 display: flex;
 flex-direction: column;
+padding: 1rem;
 `
 
 export const ListTitle = styled.h2`
   font-size: 1rem;
-  padding: 1rem;
   font-weight: 400;
   color: ${props => props.theme.colors.heading};
+  width: max-content;
 `
 
 export const List = styled.ul`
@@ -59,6 +60,6 @@ export const List = styled.ul`
 
 export const Item = styled.li`
   font-size: 1rem;
-  padding: 1rem;
+  padding: 1rem 0;
   cursor: pointer;
 `
