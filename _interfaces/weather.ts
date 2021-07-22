@@ -1,9 +1,9 @@
-interface Location {
+export interface Location {
   name: string,
   region: string,
   localtime: string | Date,
   lat: number,
-  long: number
+  lon: number
 }
 
 interface Current {

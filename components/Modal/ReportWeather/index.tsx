@@ -75,8 +75,8 @@ function ReportWeather ({ data, ...props}: ReportWeatherProps) {
         onBack={props?.onClose} 
         favoriteData={{
           city: data.location.name,
-          long: data.location.long,
-          lat: data.location.long
+          lon: data.location.lon,
+          lat: data.location.lat
         }}
       />
       <Styles.Container>

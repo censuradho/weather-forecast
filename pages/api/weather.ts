@@ -8,7 +8,7 @@ async function weather (req: NextApiRequest, res: NextApiResponse) {
   const language = req.query.lang || 'pt'
   const city = req.query.city || 'Porto Alegre'
   const days = req.query.days || 5
-
+ 
   try {
     const query = queryString.stringify({
       key: process.env.WEATHER_API_KEY,

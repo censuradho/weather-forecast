@@ -4,15 +4,14 @@ import { useRef, useEffect, useState } from 'react'
 import * as Styles from './styles'
 import { Box } from 'theme/GlobalStyles'
 
-interface FavoriteData {
-  city: string,
-  lat: number,
-  long: number
-}
+import { setItem, deleteItem, getItem } from 'lib/dbLocal'
+
+import { CITIES_FAVORITE, CitiesFavorite } from 'entities/db'
+
 
 interface HeaderProps {
   onBack?: () => void,
-  favoriteData: FavoriteData
+  favoriteData: CitiesFavorite
 }
 
 function Header (props: HeaderProps) {
@@ -23,8 +22,35 @@ function Header (props: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
 
   const handleFavorite = () => {
-    setIsFavorite(prevState => !prevState)
+    if (isFavorite) {
+
+      deleteItem(CITIES_FAVORITE, props.favoriteData.city)
+
+      setIsFavorite(false)
+      return
+    }
+
+    setItem(CITIES_FAVORITE, {
+      [props.favoriteData.city]: props.favoriteData
+    })
+    setIsFavorite(true)
+
   }
+
+  const getIsFavorite = () => {
+    const storageData = getItem<CitiesFavorite>(CITIES_FAVORITE)
+
+    const isFavorite = !!storageData.filter(data => data.city === props.favoriteData.city)[0]
+
+    if (!isFavorite) return
+
+    setIsFavorite(true)
+    
+  }
+
+  useEffect(() => {
+    getIsFavorite()
+  }, [])
 
   useEffect(() => {
     if (!refElement.current) return

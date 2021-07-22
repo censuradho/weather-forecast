@@ -38,7 +38,10 @@ export const Form = styled.form`
 `
 
 export const ListContainer = styled.section`
-
+flex: 1;
+min-height: 10rem;
+display: flex;
+flex-direction: column;
 `
 
 export const ListTitle = styled.h2`
@@ -48,9 +51,14 @@ export const ListTitle = styled.h2`
   color: ${props => props.theme.colors.heading};
 `
 
-export const List = styled.ul``
+export const List = styled.ul`
+  flex: 1;
+  overflow-y: scroll;
+
+`
 
 export const Item = styled.li`
   font-size: 1rem;
   padding: 1rem;
+  cursor: pointer;
 `

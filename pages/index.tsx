@@ -1,4 +1,5 @@
 import queryString from 'querystring'
+import { useRouter } from 'next/dist/client/router'
 
 import Header from 'components/Header'
 import FavoriteCard from 'components/FavoriteCard'
@@ -11,12 +12,20 @@ import { useState } from 'react'
 import { ResponseData as WeatherResponseData } from '_interfaces/weather'
 
 import localAPI from 'services/local'
-import { useRouter } from 'next/dist/client/router'
+
+import * as dbLocal from 'lib/dbLocal'
+
+import { CITIES_FAVORITE, CitiesFavorite } from 'entities/db'
+import { useEffect } from 'react'
 
 interface Report {
   isVisible?: boolean,
   data: WeatherResponseData | null
 }
+
+const report3 = { name: '' }
+
+type Reprot3 = keyof typeof report3 
 
 const baseReport: Report = {
   isVisible: false,
@@ -25,70 +34,36 @@ const baseReport: Report = {
 
 function  Home () {
   const router = useRouter()
+  const test: Reprot3 = ''
+  
 
   const [report, setReport] = useState<Report>(baseReport)
+  const [dataStorage, setDataStorage] = useState<WeatherResponseData[]>([])
 
-  const dataStorage = [
-    {
-      id: '2',
-      city: 'Porto Alegre',
-      meanTemperature: '12ºC',
-      maxTemperature: '25ºC',
-      minTemperature: '25ºC'
-    },
-    {
-      id: '3',
-      city: 'Canoas',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
-    },
-    {
-      id: '4',
-      city: 'Brasília, Distrito Federal',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
-    },
-    {
-      id: '5',
-      city: 'Canoas',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
-    },
-    {
-      id: '6',
-      city: 'Canoas',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
-    },
-    {
-      id: '7',
-      city: 'Canoas',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
-    },
-    {
-      id: '8',
-      city: 'Canoas',
-      meanTemperature: '11ºC',
-      maxTemperature: '30ºC',
-      minTemperature: '29ºC'
+  const getFavoriteData = async () => {
+    const storagedFavorite = dbLocal.getItem<CitiesFavorite>(CITIES_FAVORITE)
+
+    const favorites: WeatherResponseData[] = []
+
+    for (const favorite of storagedFavorite) {
+      const query = queryString.stringify({
+        city: favorite.city
+      })
+      const { data } = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
+      favorites.push(data)
     }
-  ]
+    setDataStorage(favorites)
+  }
 
   const handleOpenReport = async (cityName: string) => {
     try {
       const query = queryString.stringify({ city: cityName, days: 7 })
 
-      const { data } = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
+      const response = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
   
       setReport({
         isVisible: true,
-        data
+        data: response.data
       })
     } catch (err) {}
   }
@@ -98,16 +73,27 @@ function  Home () {
   }
 
 
-  const renderTemperature = dataStorage.map(value => 
-    <FavoriteCard
-      key={value.id}
-      city={value.city}
-      minTemperature={value.minTemperature}
-      maxTemperature={value.maxTemperature}
-      meanTemperature={value.maxTemperature}
-      onClick={() => handleOpenReport(value.city)}
-    />
-  )
+  const renderTemperature = dataStorage.map(value => {
+    const city = value.location.name
+    const minTemperature = `${value.forecast.forecastday[0].day.mintemp_c}ºC`
+    const maxTemperature = `${value.forecast.forecastday[0].day.maxtemp_c}ºC`
+    const meanTemperature = `${value.current.feelslike_c}ºC`
+
+    return (
+      <FavoriteCard
+        key={city}
+        city={city}
+        minTemperature={minTemperature}
+        maxTemperature={maxTemperature}
+        meanTemperature={meanTemperature}
+        onClick={() => handleOpenReport(city)}
+      />
+    )
+  })
+
+  useEffect(() => {
+    getFavoriteData()
+  }, [report.isVisible])
 
   return (
     <>
