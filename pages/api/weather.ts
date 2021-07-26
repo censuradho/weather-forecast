@@ -5,6 +5,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import weatherAPI from 'services/weatherAPI'
 
 async function weather (req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET')  return res.status(404).send('')
+
   const language = req.query.lang || 'pt'
   const days = req.query.days || 7
  
@@ -18,7 +20,6 @@ async function weather (req: NextApiRequest, res: NextApiResponse) {
     })
     
     const { data } = await weatherAPI.get(`/forecast.json?${query}`)
-    console.log(query)
   
     return res.json(data)
   } catch (err) {
