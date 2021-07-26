@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export const Main = styled.main`
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 `
@@ -39,7 +40,7 @@ export const Form = styled.form`
 
 export const ListContainer = styled.section`
 flex: 1;
-min-height: 10rem;
+overflow-y: scroll;
 display: flex;
 flex-direction: column;
 padding: 1rem;

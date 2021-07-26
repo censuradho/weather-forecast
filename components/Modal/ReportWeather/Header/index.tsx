@@ -16,6 +16,7 @@ interface HeaderProps {
 
 function Header (props: HeaderProps) {
   const refElement = useRef<HTMLElement>(null)
+  const coordinates = `${props.favoriteData.latitude},${props.favoriteData.longitude}`
 
   const [isFavorite, setIsFavorite] = useState(false)
   
@@ -24,14 +25,14 @@ function Header (props: HeaderProps) {
   const handleFavorite = () => {
     if (isFavorite) {
 
-      deleteItem(CITIES_FAVORITE, props.favoriteData.city)
+      deleteItem(CITIES_FAVORITE, `${props.favoriteData.latitude},${props.favoriteData.longitude}`)
 
       setIsFavorite(false)
       return
     }
 
     setItem(CITIES_FAVORITE, {
-      [props.favoriteData.city]: props.favoriteData
+      [coordinates]: props.favoriteData
     })
     setIsFavorite(true)
 
@@ -40,12 +41,11 @@ function Header (props: HeaderProps) {
   const getIsFavorite = () => {
     const storageData = getItem<CitiesFavorite>(CITIES_FAVORITE)
 
-    const isFavorite = !!storageData.filter(data => data.city === props.favoriteData.city)[0]
+    const isFavorite = !!storageData.filter(data => `${data.latitude},${data.longitude}` === coordinates)[0]
 
     if (!isFavorite) return
 
     setIsFavorite(true)
-    
   }
 
   useEffect(() => {
@@ -74,14 +74,12 @@ function Header (props: HeaderProps) {
       <button onClick={props.onBack}>
         <MdArrowBack size={25} />
       </button>
-      <Styles.Title>Cidades - Porto Alegre</Styles.Title>
+      <Styles.Title>Clima</Styles.Title>
       <Box 
         alignItems="center"
         gap={1}
       >
-        <button>
-          <MdSearch size={25} />
-        </button>
+
         <button onClick={handleFavorite}>
           {!isFavorite ? <MdBookmarkBorder size={25} /> : <MdBookmark size={25} />}
         </button>

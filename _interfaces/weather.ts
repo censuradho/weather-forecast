@@ -50,16 +50,13 @@ interface Hour {
   time: string,
   temp_c: string,
   temp_f: string,
-  condition: {
-    text: string
-  },
-
 }
+
 interface ForeCastDay {
   date: string,
   day: Day
   astro: Astro,
-
+  hour: Hour[]
 }
 export interface ResponseData {
   location: Location,

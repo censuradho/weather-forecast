@@ -12,7 +12,7 @@ import {
 import  useTheme from 'hooks/useTheme'
 
 interface AreaChartData {
-  temperature: number,
+  temperature: string,
   day: string
 }
 interface LinechartProps {
@@ -21,7 +21,6 @@ interface LinechartProps {
 
 function Linechart ({ data }: LinechartProps) {
   const { colors } = useTheme()
-  console.log(data)
 
   return (
     <Styles.Container>

@@ -11,6 +11,7 @@ import * as Styles from 'styles'
 import { useState } from 'react'
 
 import { ResponseData as WeatherResponseData } from '_interfaces/weather'
+import { PositionStackData } from '_interfaces/positionStack'
 
 import localAPI from 'services/local'
 
@@ -39,17 +40,20 @@ function  Home () {
   const getFavoriteData = async () => {
     try {
       setIsLoading(true)
-      const storagedFavorite = dbLocal.getItem<CitiesFavorite>(CITIES_FAVORITE)
+      const storagedFavorite = dbLocal.getItem<PositionStackData>(CITIES_FAVORITE)
   
       const favorites: WeatherResponseData[] = []
   
       for (const favorite of storagedFavorite) {
         const query = queryString.stringify({
-          city: favorite.city
+          query: `${favorite.latitude},${favorite.longitude}`
         })
+
         const { data } = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
         favorites.push(data)
       }
+
+      console.log(favorites)
       setDataStorage(favorites)
     } catch (err) {
 
@@ -58,9 +62,9 @@ function  Home () {
     }
   }
 
-  const handleOpenReport = async (cityName: string) => {
+  const handleOpenReport = async (coordinates: string) => {
     try {
-      const query = queryString.stringify({ city: cityName, days: 7 })
+      const query = queryString.stringify({ query: coordinates })
 
       const response = await localAPI.get<WeatherResponseData>(`/weather?${query}`)
   
@@ -90,7 +94,7 @@ function  Home () {
         minTemperature={minTemperature}
         maxTemperature={maxTemperature}
         meanTemperature={meanTemperature}
-        onClick={() => handleOpenReport(city)}
+        onClick={() => handleOpenReport(`${value.location.lat},${value.location.lon}`)}
       />
     )
   })

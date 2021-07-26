@@ -6,18 +6,19 @@ import weatherAPI from 'services/weatherAPI'
 
 async function weather (req: NextApiRequest, res: NextApiResponse) {
   const language = req.query.lang || 'pt'
-  const city = req.query.city || 'Porto Alegre'
-  const days = req.query.days || 5
+  const days = req.query.days || 7
  
   try {
     const query = queryString.stringify({
       key: process.env.WEATHER_API_KEY,
       lang: language,
-      q: city,
+      q: req.query.query,
       days,
+      alerts: 'yes'
     })
-
+    
     const { data } = await weatherAPI.get(`/forecast.json?${query}`)
+    console.log(query)
   
     return res.json(data)
   } catch (err) {

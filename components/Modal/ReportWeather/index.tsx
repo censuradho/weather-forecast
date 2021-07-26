@@ -17,7 +17,7 @@ import ClearCloudy from 'public/clear-cloudy.svg'
 // import IsolatedThunderStorms from 'public/isolated-thunderstroms.svg'
 // import MostlyCloudy from 'public/mostly-cloudy.svg'
 // import PartlyCloudy from 'public/partly-cloudy.svg'
-// import Showers from 'public/showers.svg'
+import Showers from 'public/showers.svg'
 // import Sleet from 'public/sleet.svg'
 // import SnowFlurries from 'public/snow-flurries.svg'
 // import Snow from 'public/snow.svg'
@@ -42,12 +42,14 @@ const mapIcons = {
   1: CloudSvg,
   3: ColdSvg,
   Sol: Sunny,
+  Chuvisco: Showers,
+  'Aguaceiros fracos': Showers
 }
 
 
 function ReportWeather ({ data, ...props}: ReportWeatherProps) {
   const date = format(new Date(), "'Hoje - 'EEEE dd")
-  const icon = mapIcons[data?.current?.condition?.text as keyof typeof mapIcons]
+  const icon = mapIcons[data?.current?.condition?.text as keyof typeof mapIcons] || CloudSvg
   
   const renderWeekData = data?.forecast?.forecastday?.map(value => (
     <DayCard
@@ -60,13 +62,12 @@ function ReportWeather ({ data, ...props}: ReportWeatherProps) {
       }} 
     />
   ))
- 
-
-  const areaChartData = data?.forecast?.forecastday?.map(value => ({
-    temperature: (value.day.maxtemp_c * value.day.mintemp_c) / 2,
-    day: format(new Date(value.date), 'EEEE')
-  }))
   
+  const areaChartData = data?.forecast?.forecastday?.[0].hour.map(value => ({
+    temperature: value.temp_c,
+    day: format(new Date(value.time), 'H')
+  }))
+
   if (!props.isVisible) return null
 
   return (
@@ -74,9 +75,8 @@ function ReportWeather ({ data, ...props}: ReportWeatherProps) {
       <Header 
         onBack={props?.onClose} 
         favoriteData={{
-          city: data.location.name,
-          lon: data.location.lon,
-          lat: data.location.lat
+          longitude: data.location.lon,
+          latitude: data.location.lat
         }}
       />
       <Styles.Container>
@@ -97,16 +97,11 @@ function ReportWeather ({ data, ...props}: ReportWeatherProps) {
                   <Styles.Label>Humid.</Styles.Label>
                   <Styles.Value>{data?.current?.humidity}%</Styles.Value>
                 </Box>
-                <Box column gap={.5}>
-                  <Styles.Label>Chuva</Styles.Label>
-                  <Styles.Value>{data?.current?.precip_in}%</Styles.Value>
-                </Box>
               </Box>
             </Box>
-
             <Box column alignItems="center" gap={1}> 
               <Styles.IconWeather>
-                <Image src={ClearCloudy || CloudSvg} layout="fill" alt="icon weather" />
+                <Image src={icon} layout="fill" alt="icon weather" />
               </Styles.IconWeather>
               <Box>
                 <Box>
