@@ -104,7 +104,7 @@ function  Home () {
   }, [])
 
   return (
-    <>
+    <Styles.Container>
       <ActivityIndicator isVisible={isLoading} />
       <ReportWeather 
         isVisible={report.isVisible}
@@ -119,7 +119,7 @@ function  Home () {
         </Styles.FavoriteContainer>
         <Button onClick={() => router.push('/pesquisa')}>Adicionar uma cidade</Button>
       </Styles.Main>
-    </>
+    </Styles.Container>
   )
 }
 

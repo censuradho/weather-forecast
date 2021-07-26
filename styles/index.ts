@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+export const Container = styled.div`
+  margin: 0 auto;
+  width: 100%;
+  max-width: 400px;
+`
+
 export const Main = styled.main`
   width: 100%;
   height: calc(100vh - 96px);

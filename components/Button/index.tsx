@@ -7,13 +7,13 @@ import * as Styles from './styles'
 
 interface ButtonProps {
   children: ReactNode,
-  onClick?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onClick?: (event:MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void
 }
 
 function Button (props: ButtonProps) {
 
   return (
-    <Styles.Button onClick={props.onClick}>
+    <Styles.Button onClick={props?.onClick}>
       <Box 
         flex={1}
         alignItems="center"
